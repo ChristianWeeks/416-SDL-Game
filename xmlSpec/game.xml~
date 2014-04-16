@@ -1,0 +1,101 @@
+<?xml version = "1.0"?>
+<GameData>
+<screenTitle>Basic Game Framework</screenTitle>
+<username>caweeks</username>
+<frameMax>400</frameMax>
+<frameCap>60</frameCap>
+<framesAreCapped>true</framesAreCapped>
+
+
+<view>
+  <viewWidth>640</viewWidth>
+  <viewHeight>692</viewHeight>
+</view>
+
+<world>
+  <worldWidth>1600</worldWidth>
+  <worldHeight>692</worldHeight>
+</world>
+
+<hud>
+	<hudWidth>210</hudWidth>
+	<hudHeight>150</hudHeight>
+	<hudX>5</hudX>
+	<hudY>40</hudY>
+	<hudBorderColor>0</hudBorderColor>
+	<hudShowAtStart>true</hudShowAtStart>	
+</hud>
+
+<font name="font">
+  <fontFile>font/dyslexic-bold.otf</fontFile>
+  <fontSize>14</fontSize>
+  <fontRed>139</fontRed>
+  <fontGreen>0</fontGreen>
+  <fontBlue>0</fontBlue>
+  <fontUnused>0</fontUnused>
+</font>
+<maxStringSize>50</maxStringSize>
+
+<back>
+  <backSrcX>0</backSrcX>
+  <backSrcY>0</backSrcY>
+  <backFactor>1</backFactor>
+  <backWidth>1600</backWidth>
+  <backHeight>692</backHeight>
+  <backLayers>5</backLayers>
+  <backTransparency>true</backTransparency>
+  <backLayer1File>images/backSky.png</backLayer1File>
+  <backLayer2File>images/backBack.png</backLayer2File>
+  <backLayer3File>images/backMid.png</backLayer3File>
+  <backLayer4File>images/backFore.png</backLayer4File>
+  <backLayer5File>images/backPeriFore.png</backLayer5File>
+</back>
+
+<player>
+	<playerY>1</playerY>
+	<playerX>1</playerX>
+	<playerFile>images/protagonistRun.png</playerFile>
+	<playerLoc playerLocX="100" playerLocY="320"/>
+	<playerFrames>6</playerFrames>
+	<playerChunks>25</playerChunks>
+	<playerFrameInterval>100</playerFrameInterval>
+	<playerSrcX>0</playerSrcX>
+	<playerSrcY>0</playerSrcY>
+	<playerMaxX>220</playerMaxX>
+	<playerMaxY>140</playerMaxY>
+	<playerWidth>100</playerWidth>
+	<playerHeight>162</playerHeight>
+	<playerTransparency>true</playerTransparency>
+</player>
+
+<evilSpiritTwoWay>
+	<evilSpiritTwoWayFile>images/evilSpiritTwoWay.png</evilSpiritTwoWayFile>
+	<evilSpiritTwoWayLoc evilSpiritTwoWayX="100" evilSpiritTwoWayY="100"/>
+	<evilSpiritTwoWayFrames>2</evilSpiritTwoWayFrames>
+	<evilSpiritTwoWayChunks>25</evilSpiritTwoWayChunks>
+	<evilSpiritTwoWayFrameInterval>100</evilSpiritTwoWayFrameInterval>
+
+	<evilSpiritTwoWaySrcX>0</evilSpiritTwoWaySrcX>
+	<evilSpiritTwoWaySrcY>0</evilSpiritTwoWaySrcY>
+	<evilSpiritTwoWayWidth>168</evilSpiritTwoWayWidth>
+	<evilSpiritTwoWayHeight>91</evilSpiritTwoWayHeight>
+	<evilSpiritTwoWayTransparency>true</evilSpiritTwoWayTransparency>
+</evilSpiritTwoWay>
+
+<evilSpirit>
+	<evilSpiritFile>images/evilSpirit3.png</evilSpiritFile>
+	<evilSpiritLoc evilSpiritX="300" evilSpiritY="240"/>
+
+	
+	<evilSpiritFrames>6</evilSpiritFrames>
+	<evilSpiritFrameInterval>20</evilSpiritFrameInterval>
+	<evilSpiritChunks>25</evilSpiritChunks>
+
+	<evilSpiritSrcX>0</evilSpiritSrcX>
+	<evilSpiritSrcY>0</evilSpiritSrcY>
+	<evilSpiritWidth>100</evilSpiritWidth>
+	<evilSpiritHeight>102</evilSpiritHeight>
+	<evilSpiritTransparency>true</evilSpiritTransparency>
+</evilSpirit>
+
+</GameData>

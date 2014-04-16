@@ -1,0 +1,31 @@
+Name: Christian Weeks	
+Clemson Email Address: caweeks
+
+Project no: 4
+Project due date: 4/15/2014
+Project description: Object Pooling, Projectiles, Collisions, Explosions, and Sound
+
+The Specs that I implemented are:
+*Music
+*Collision Detection
+
+
+The Specs that I was unable to implement are:
+*Explosions
+*Projectiles / Memory Pooling
+
+Extras:
+*Created a new playersprite with run sequences for left and right and an idle sprite.
+*fixed old sprites that weren't extracted properly because they were unaligned.
+*fixed key captures so they are much more responsive.
+
+
+ToDo:
+*Add in gravity and fix collision detection so player stands on the foreground
+	--need to rework background images for this, possibly create new class.  Right now they are just frames instead of Sprites.
+*Add health or point system
+*Add collectibles
+*extend scene and add an ending to the far left
+
+Comments:
+*As we've discussed, I don't really see projectiles or explosions really fitting into my game.  That being said, the only thing I did to make up for them is implement new sprites, which isn't really technical so I understand taking off points.  I'm ashamed to admit that this is a poor turnin as I've not completed half the features;  I've just had to reprioritize things lately and this project came out on bottom (also cause for my abysmal quiz performance on Monday).  Hope this isn't disappointing; considering how often I come in and speak with you, I feel like I should be doing a bit better in your class.  I'm still looking forward to creating a well-polished and aesthetically pleasing game, even if it takes into the summer.
