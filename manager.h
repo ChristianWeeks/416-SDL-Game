@@ -21,6 +21,7 @@ private:
 
   //screen must be initialized before viewport & world
   SDL_Surface * const screen;
+
   
   //viewport must be initialized before world
   Viewport &viewport;
@@ -30,6 +31,9 @@ private:
   std::vector<Drawable*> sprites;
   //foreground must be declared after world
   const Frame * foreground;
+  
+  //Collision map of the foreground
+  bool *collisionMap;
   int currentSprite;
   bool makeVideo;
   int frameCount;
@@ -46,6 +50,9 @@ private:
   void draw() const;
   void update();
   bool checkForCollisions() const;
+  bool isVisible(Uint32, SDL_Surface *) const;
+  void createCollisionMap();
+
 
   Manager(const Manager&);
   Manager& operator=(const Manager&);

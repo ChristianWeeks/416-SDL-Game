@@ -23,21 +23,25 @@ const Frame * World::getForeground() const{
 
 //updates the current viewport location
 void World::update() {
-  viewX = static_cast<int>(view.X() / factor) % frameWidth;
+  viewX = static_cast<int>(view.X());
   viewY = view.Y();
 }
 
 void World::draw() const {
   unsigned int viewWidth = Gamedata::getInstance().getXmlInt("viewWidth");
-  unsigned int center = (frameWidth / 2) - (viewWidth / 2);
+  unsigned int center = (worldWidth / 2); //- (viewWidth / 2);
   float perspectiveFactor;
-
+  float compensateForViewWidth;
   for(unsigned int i = 0; i < layers; ++i){
 
 	//everything should line up at half the width of the screen.
 	perspectiveFactor = ((float)(i+1) / 4) - 1;
+	if(viewX == 0)
+		compensateForViewWidth = 0;
+	else
+		compensateForViewWidth = perspectiveFactor * viewWidth * (viewX / worldWidth);
 	//std::cout << "perspectiveFactor: " << perspectiveFactor << std::endl;
-	backLayers[i]->draw((viewX - perspectiveFactor*(center - viewX)), viewY, 0, 0);
+	backLayers[i]->draw((viewX - perspectiveFactor*(center - viewX))+(perspectiveFactor*center) + (int)compensateForViewWidth, viewY, 0, 0);
   //frame->draw(viewX, viewY, 0, 0); 
   // backLayers[i]->draw(0, viewY, frameWidth-viewX, 0); 
   }

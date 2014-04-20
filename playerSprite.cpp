@@ -5,8 +5,22 @@ PlayerSprite::PlayerSprite(const std::string& name) : MultiSprite(name),
 	maxXSpeed( Gamedata::getInstance().getXmlInt("playerMaxX") ),
 	maxYSpeed( Gamedata::getInstance().getXmlInt("playerMaxY") ),
 	io( IOManager::getInstance() ),
+	gravity(false),
+	footSupport(0),
         collider()
-{ setVelocity(Vector2f(0,0));
+{ 
+	int width = getFrame()->getWidth();
+	int height = getFrame()->getHeight();
+	//Offset so character stands more on the center of his feet rather than his tip toes
+	int heightOffset = height - 15;
+	leftFoot[0] = heightOffset;
+	//left foot is ~ 3/7ths the width of the sprite
+	leftFoot[1] = (width * 3) / 7;
+	rightFoot[0] = heightOffset;
+	rightFoot[1] = (width * 4) / 7;
+	std::cout << "Right:" << rightFoot[0] << ", " << rightFoot[1] << std::endl;
+	std::cout << "Left:" << leftFoot[0] << ", " << leftFoot[1] << std::endl;
+	setVelocity(Vector2f(0,0));
 	keyPressedX[0] = 0;
 	keyPressedX[1] = 0;
 	keyPressedY[0] = 0;
@@ -17,6 +31,8 @@ PlayerSprite::PlayerSprite(const PlayerSprite& p) : MultiSprite(p),
 	maxXSpeed( p.maxXSpeed ),
 	maxYSpeed( p.maxYSpeed ),
 	io( IOManager::getInstance() ),
+	gravity(false),
+	footSupport(0),
         collider()
 { setVelocity(Vector2f(0,0));
 	keyPressedX[0] = 0;
@@ -60,12 +76,47 @@ void PlayerSprite::advanceFrame(Uint32 ticks) {
 
 }
 
+int PlayerSprite::testFooting(bool * collisionMap, int worldWidth){
+
+	//is the player in the ground?
+	bool leftFootPos = collisionMap[(((int)Y() + leftFoot[0])*worldWidth) + (int)X() + leftFoot[1]];
+	bool rightFootPos = collisionMap[(((int)Y() + rightFoot[0])*worldWidth) + (int)X() + rightFoot[1]];
+	//if either foot is in the collision map, they must be adjusted up
+	if(rightFootPos || leftFootPos){
+		footSupport = 1;
+		return 1;
+	}
+	//is the player in the air?	
+	bool isLeftFootSupported = collisionMap[(((int)Y() + leftFoot[0] + 1)*worldWidth) + (int)X() + leftFoot[1] + 1];
+	bool isRightFootSupported = collisionMap[(((int)Y() + rightFoot[0] + 1)*worldWidth) + (int)X() + rightFoot[1] + 1];
+	//if neither foot is on the ground, gravity must be enacted
+	if(!isLeftFootSupported && !isRightFootSupported){
+		footSupport = 2;   
+		return 2;
+	}
+	footSupport = 0;
+	return 0;
+}
+ 
+void PlayerSprite::adjustFooting(bool * collisionMap, int worldWidth){
+	Vector2f newPos;
+
+	while(testFooting(collisionMap, worldWidth) == 1){
+		newPos = getPosition();
+		newPos[1] = newPos[1] - 1 ;
+		setPosition(newPos);
+	}
+	
+}
+
 void PlayerSprite::updateVelocity(){
 
 	io.printMessageValueAt("Right Key Pressed: ", keyPressedX[0], 20, 200);
 	io.printMessageValueAt("Left Key Pressed: ", keyPressedX[1], 20, 215);
 	io.printMessageValueAt("Down Key Pressed:", keyPressedY[0], 20, 230);
 	io.printMessageValueAt("Up Key Pressed: ", keyPressedY[1], 20, 245);
+	io.printMessageValueAt("Gravity: ", (int)gravity, 20, 260);
+	io.printMessageValueAt("FootSupport: ", footSupport, 20, 275);
 	//stopping character if he hits the edge of the world and is moving that direction
 	if((getXPos() >= worldWidth - frameWidth && keyPressedX[0]) || (getXPos() <= 0 && keyPressedX[1])){
 		setVelX(0);
@@ -92,18 +143,10 @@ void PlayerSprite::updateVelocity(){
 		setVelY(0);
 	}
 	else{
-		if(keyPressedY[0] == 0 && keyPressedY[1] == 0)
+		if(keyPressedY[1] == 0 && footSupport == 0)
 			setVelY(0);
-		//increase y velocity until it reaches max velocity
-		//down
-		if(keyPressedY[0] == 1 && getVelY() < maxYSpeed){
-			setVelY(maxYSpeed);
-		}
-		//up
-		if(keyPressedY[1] == 1 && getVelY() > -1 * maxYSpeed){
-			setVelY(-1 * maxYSpeed);
-		}
 	}
+	if(gravity) setVelY(velocityY() + 100);
 }
 
 void PlayerSprite::setKeyX(int index, int value){

@@ -17,7 +17,7 @@ Manager::~Manager() {
 }
 
 /*
-	CONSTRUCTOR INSTANTIATES ALL MANAGES ALL SPRITES AND GAMEDATA
+	CONSTRUCTOR INSTANTIATES AND MANAGES ALL SPRITES AND GAMEDATA
 */
 Manager::Manager() :
   env( SDL_putenv(const_cast<char*>("SDL_VIDEO_CENTERED=center")) ),
@@ -30,6 +30,7 @@ Manager::Manager() :
   drawHud( Gamedata::getInstance().getXmlBool("hudShowAtStart") ),
   sprites(),
   foreground(world.getForeground()),
+  collisionMap(),
   currentSprite(0),
   makeVideo( false ),
   frameCount( 0 ),
@@ -43,7 +44,13 @@ Manager::Manager() :
     throw string("Unable to initialize SDL: ");
   }
   atexit(SDL_Quit);
-
+	//creating the collision map
+	createCollisionMap();
+	std::cout << "MAP TEST! " << std::endl;
+	std::cout << "width" << foreground->getWidth() << std::endl;
+	std::cout << collisionMap[20] << std::endl;	
+	std::cout << collisionMap[50*foreground->getWidth() + 20] << std::endl;	
+	std::cout << collisionMap[650*foreground->getWidth() + 20] << std::endl;	
 	//collider = new PerPixelCollisionStrategy;
 	sprites.reserve(7);
 	sprites.push_back( player );
@@ -53,7 +60,6 @@ Manager::Manager() :
 	sprites.push_back( new MultiSprite("evilSpirit"));
 	sprites.push_back( new MultiSprite("evilSpirit"));
 	sprites.push_back( new MultiSprite("evilSpirit"));
-
 
 	viewport.setObjectToTrack(sprites[0]);
 }
@@ -78,17 +84,18 @@ void Manager::draw() const {
   viewport.draw();
   for(unsigned int i = 0; i < sprites.size(); ++i)
 		sprites[i]->draw();
-  io.printMessageCenteredAt(TITLE, 10);
+  //io.printMessageCenteredAt(TITLE, 10);
   if(drawHud)
   	HUD.draw();
   player->draw();
   player->updateVelocity();
-  std::stringstream strm;
+  std::stringstream strm, strm2;
   int playerX = static_cast<int>(player->getXPos());
   int playerY = static_cast<int>(player->getYPos());
   strm << "Player at: (" << playerX << ", " << playerY << ")";
   io.printMessageAt(strm.str(), 320, 10);
-
+  strm2 << "Viewport at: (" << viewport.X() << ", " << viewport.Y() << ")";
+  io.printMessageAt(strm2.str(), 320, 25);
   if ( checkForCollisions() ) {
     io.printMessageAt("*** Oops ***, collision!", 320, 60);
     io.printMessageAt("***", playerX-viewport.X(), playerY-viewport.Y()-10);
@@ -141,6 +148,48 @@ void Manager::update() {
 }
 
 /*
+ * TESTS IF A PIXEL IS VISIBLE
+ */ 
+bool Manager::isVisible(Uint32 pixel, SDL_Surface *surface) const {
+	Uint32 temp;
+	SDL_PixelFormat* format = surface->format;
+	//performing same routine as isvisible method in collisionstrategy to create map	
+	if(format->BitsPerPixel== 32){
+		temp=pixel&format->Amask; /* isolate alpha component */
+		temp=temp>>format->Ashift;/* shift it down to 8-bit */
+		temp=temp<<format->Aloss; /* expand to a full 8-bit number */
+		if(temp == 0) return false;
+	}
+	if(pixel == surface->format->colorkey) return false;
+	return true;
+}
+
+/*
+ * Creates the collision map of the foreground for the player to walk on 
+ */
+void Manager::createCollisionMap(){
+	SDL_Surface* foreSurface = foreground->getSurface();
+	SDL_LockSurface(foreSurface);
+	Uint32 *pixels = static_cast<Uint32 *>(foreSurface->pixels);
+	unsigned pixel;
+	//initializing collision map
+	int width = foreground->getWidth(); 
+	int height = foreground->getHeight();
+	collisionMap = new bool[width * height];
+	for(int i = 0; i < height; i++){
+		for(int j = 0; j < width; j++){
+			pixel = pixels[(i * width) + j];
+			collisionMap[(i*width) + j] = isVisible(pixel, foreSurface);
+		}
+	}
+	SDL_UnlockSurface(foreSurface);
+}
+
+
+
+	
+
+/*
 	RUNS THE EVENT LOOP
 */
 void Manager::play() {
@@ -148,9 +197,11 @@ void Manager::play() {
   SDLSound sound;
   bool done = false;
   bool keyCatch = false;
+  int footStatus = 0;
   while ( not done ) {
 
 
+	footStatus = player->testFooting(collisionMap, foreground->getWidth());
     SDL_PollEvent(&event);
     Uint8 *keystate = SDL_GetKeyState(NULL);
     if (event.type ==  SDL_QUIT) { done = true; break; }
@@ -168,7 +219,9 @@ void Manager::play() {
     if(event.type == SDL_KEYDOWN) {
 		//Player1 movements
 		if(keystate[SDLK_UP]){
-			keyCatch = true;
+			if(footStatus == 0) {
+				player->velocityY(-1100);
+			keyCatch = true;			}
 			player->setKeyY(1, 1);
 		}
 		if(keystate[SDLK_DOWN]){
@@ -195,7 +248,7 @@ void Manager::play() {
       if (keystate[SDLK_t] && !keyCatch) {
         keyCatch = true;
         currentSprite = (currentSprite+1) % sprites.size();
-        viewport.setObjectToTrack(sprites[currentSprite]);
+
       }
       if (keystate[SDLK_s] && !keyCatch) {
         keyCatch = true;
@@ -215,6 +268,12 @@ void Manager::play() {
 			drawHud = !drawHud;
 		}
     }
+	if(footStatus == 1){
+		player->disableGravity();
+	   	player->adjustFooting(collisionMap, foreground->getWidth()); 
+	}
+	else if(footStatus == 2) player->enableGravity();
+	else player->disableGravity();
 
     draw();
     update();

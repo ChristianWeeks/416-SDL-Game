@@ -9,12 +9,12 @@
 
 <view>
   <viewWidth>640</viewWidth>
-  <viewHeight>692</viewHeight>
+  <viewHeight>854</viewHeight>
 </view>
 
 <world>
-  <worldWidth>1600</worldWidth>
-  <worldHeight>692</worldHeight>
+  <worldWidth>6400</worldWidth>
+  <worldHeight>854</worldHeight>
 </world>
 
 <hud>
@@ -40,15 +40,23 @@
   <backSrcX>0</backSrcX>
   <backSrcY>0</backSrcY>
   <backFactor>1</backFactor>
-  <backWidth>1600</backWidth>
-  <backHeight>692</backHeight>
   <backLayers>5</backLayers>
   <backTransparency>true</backTransparency>
-  <backLayer1File>images/backSky.png</backLayer1File>
-  <backLayer2File>images/backBack.png</backLayer2File>
-  <backLayer3File>images/backMid.png</backLayer3File>
-  <backLayer4File>images/backFore.png</backLayer4File>
-  <backLayer5File>images/backPeriFore.png</backLayer5File>
+  <backLayer1File>images/backSky1600.png</backLayer1File>
+  <backLayer1FileWidth>1600</backLayer1FileWidth>
+  <backLayer1FileHeight>692</backLayer1FileHeight>
+  <backLayer2File>images/backBack3200.png</backLayer2File>
+  <backLayer2FileWidth>3200</backLayer2FileWidth>
+  <backLayer2FileHeight>854</backLayer2FileHeight>
+  <backLayer3File>images/backMid4800.png</backLayer3File>
+  <backLayer3FileWidth>4800</backLayer3FileWidth>
+  <backLayer3FileHeight>854</backLayer3FileHeight>
+  <backLayer4File>images/backFore6400.png</backLayer4File>
+  <backLayer4FileWidth>6400</backLayer4FileWidth>
+  <backLayer4FileHeight>854</backLayer4FileHeight>
+  <backLayer5File>images/backPeripheral.png</backLayer5File>
+  <backLayer5FileWidth>8000</backLayer5FileWidth>
+  <backLayer5FileHeight>854</backLayer5FileHeight>
 </back>
 
 <player>
