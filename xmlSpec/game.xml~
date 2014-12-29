@@ -8,8 +8,8 @@
 
 
 <view>
-  <viewWidth>640</viewWidth>
-  <viewHeight>692</viewHeight>
+  <viewWidth>854</viewWidth>
+  <viewHeight>640</viewHeight>
 </view>
 
 <world>
@@ -42,7 +42,7 @@
   <backFactor>1</backFactor>
   <backLayers>5</backLayers>
   <backTransparency>true</backTransparency>
-  <backLayer1File>images/backSky.png</backLayer1File>
+  <backLayer1File>images/backSky1600.png</backLayer1File>
   <backLayer1FileWidth>1600</backLayer1FileWidth>
   <backLayer1FileHeight>692</backLayer1FileHeight>
   <backLayer2File>images/backBack3200.png</backLayer2File>
@@ -52,7 +52,7 @@
   <backLayer3FileWidth>4800</backLayer3FileWidth>
   <backLayer3FileHeight>854</backLayer3FileHeight>
   <backLayer4File>images/backFore6400.png</backLayer4File>
-  <backLayer4FileWidth>4800</backLayer4FileWidth>
+  <backLayer4FileWidth>6400</backLayer4FileWidth>
   <backLayer4FileHeight>854</backLayer4FileHeight>
   <backLayer5File>images/backPeripheral.png</backLayer5File>
   <backLayer5FileWidth>8000</backLayer5FileWidth>
@@ -105,5 +105,36 @@
 	<evilSpiritHeight>102</evilSpiritHeight>
 	<evilSpiritTransparency>true</evilSpiritTransparency>
 </evilSpirit>
+
+
+<shiningLight>
+	<shiningLightFile>images/shiningLight.png</shiningLightFile>
+	<shiningLightLoc shiningLightX="300" shiningLightY="240"/>
+
+	
+	<shiningLightFrames>8</shiningLightFrames>
+	<shiningLightFrameInterval>25</shiningLightFrameInterval>
+	<shiningLightChunks>25</shiningLightChunks>
+
+	<shiningLightSrcX>0</shiningLightSrcX>
+	<shiningLightSrcY>0</shiningLightSrcY>
+	<shiningLightWidth>125</shiningLightWidth>
+	<shiningLightHeight>125</shiningLightHeight>
+	<shiningLightTransparency>true</shiningLightTransparency>
+</shiningLight>
+
+<egg>
+	<eggFile>images/egg.png</eggFile>
+	<eggLoc eggX="600" eggY="500"/>
+	<eggFrames>1</eggFrames>
+	<eggFrameInterval>10</eggFrameInterval>
+	<eggSrcX>0</eggSrcX>
+	<eggSrcY>0</eggSrcY>
+	<eggWidth>30</eggWidth>
+	<eggHeight>30</eggHeight>
+	<eggTransparency>true</eggTransparency>
+</egg>
+
+
 
 </GameData>

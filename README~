@@ -1,42 +1,34 @@
 Name: Christian Weeks	
 Clemson Email Address: caweeks
 
-Project no: 3
-Project due date: 3/27/2014
-Project description: Parallex, HUD, Player Implementations
+Project no: 5
+Project due date: 4/23/2014
+Project description: FINAL PROJECT!!!!
 
-The Specs that I implemented are:
-*new player sprites and PlayerSprite class.  PLAYER MOVES WITH UP, DOWN, LEFT, RIGHT, not WSAD
-*Toggleable HUD with F1
-*Parallex scrolling with 5 layers, uses painter's algorithm
-*added new function to FrameFactory class to produce a multilayered background
+TO BEAT THE GAME:
 
+Retrieve the item at the far right end of the level and bring it back to the starting location.
+Don't die.
 
 
-The Specs that I was unable to implement are:
-*Did not implement a new XML parser
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NEW FEATURES:
 
-Things I wanted to do (and will inevitably do, but just weren't required for the project):
-*fix player sprite so that it does not automatically reverse velocity when hitting a wall
-*fix key captures so they are less clunky
-*fix the spinning demon's sprite... It looks better but the image is off by a pixel, causing it to shift slightly and wrap around.  It's difficult to create
-sprites that are accurate up to a single pixel!
-*lower the ground so the sky is more visible
-*make longer and more detailed backgrounds
+*Collision map generated from foreground.  Player successfully runs along the ground and is pulled down by gravity while in the air.  Player can jump, although it doesn't work when he is running downhill because of the way gravity and foot support works.
 
-Extras:
-*changed multisprite so that sprite velocities were randomly generated rather than pulled from XML.  I got tired of watching the same path over and over again.
-*all sprites + background made by me!
-*modified the spinning demon's sprite to have a more smooth animation
+*Game world is 4x larger than before (6400 px).  Unique art for all 5 layers for entire length. Viewport code modified so that smaller images may be used for the background since the background moves slower.
 
+*new AggroSprite class.  Inherits from MultiSprite.  AI implementation. Some enemies spawn at pre-determined locations.  If the user gets within their aggro range, they will follow the user until they reach their leash length, at which point they will return to their home spot (if the user is also out of range). Uses observer pattern.
 
-What I want to Implement:
+*New EffectSprite Class.  Inherits from MultiSprite. Contains a reference to a "host" drawable as well as offset variables so that different effects can be drawn around the host sprite.  Used on the player and the collection item.
 
-By the end of this course I'd like for my game to be a simple side-scroller, where the user has to explore a dark and foreboding world,
-and collect some sort of item while avoiding the frightening demons.  More than anything I want it to be an emotionally captivating experience,
-so I'm not sure if I want to provide the user with a means to kill or dispatch the demons.  I'd like to have unique and smooth animations for
-all of the characters and animations for the player that include jumping, running, picking up an item, etc.  The game will be a linear level,
-so it will end when the character reaches the far right of the world.  Score can be determined by the user's overall health / life at the end,
-which will be siphoned by the different dark creatures he encounters along the way and restored by items.
+*New CollectibleSprite Class.  Inherits MultiSprite.  Added behavior to react and be "collected" when the user comes into contact with it.
 
-Score to me is a less important because I'm envisioning the game more as a story / journey experience than a BEAT THE HIGH SCORE!!! kind of experience.
+*Player Health.  ENEMIES DO DAMAGE AS THEY CONTACT THE PLAYER
+
+*Press r to reset the game.  Resets player and victory item positions.
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Comments:
+I'm pretty happy with this.  I implemented everything I wanted to, and any changes are minor (like fixing jumping, but jumping isn't essential anyways).  I hope you enjoy it.

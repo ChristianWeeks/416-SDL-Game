@@ -5,7 +5,7 @@
 #include "viewport.h"
 #include "world.h"
 #include "hud.h"
-#include "sound.h"
+
 
 class Manager {
 public:
@@ -18,9 +18,11 @@ private:
   const bool env;
   const IOManager& io;
   Clock& clock;
+  bool collected;
 
   //screen must be initialized before viewport & world
   SDL_Surface * const screen;
+
   
   //viewport must be initialized before world
   Viewport &viewport;
@@ -30,6 +32,9 @@ private:
   std::vector<Drawable*> sprites;
   //foreground must be declared after world
   const Frame * foreground;
+  
+  //Collision map of the foreground
+  bool *collisionMap;
   int currentSprite;
   bool makeVideo;
   int frameCount;
@@ -41,11 +46,17 @@ private:
   //Player sprite
   PlayerSprite* player;
  // CollisionStrategy * collider;
-  SDLSound sound;
+
   void makeFrame();
-  void draw() const;
+  void draw();
+  bool checkVictory();
+  bool checkDefeat();
   void update();
-  bool checkForCollisions() const;
+  void checkForCollisions();
+  bool isVisible(Uint32, SDL_Surface *) const;
+  void createCollisionMap();
+  void reset();
+
 
   Manager(const Manager&);
   Manager& operator=(const Manager&);

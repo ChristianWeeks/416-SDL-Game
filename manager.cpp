@@ -5,12 +5,16 @@
 #include "sprite.h"
 #include "multisprite.h"
 #include "playerSprite.h"
+#include "aggroSprite.h"
+#include "effectSprite.h"
+#include "collectible.h"
 #include "gamedata.h"
 #include "manager.h"
 #include "sound.h"
 
 Manager::~Manager() { 
   // Manager made it, so Manager needs to delete it
+  delete collisionMap;
   for (unsigned i = 0; i < sprites.size(); ++i) {
     delete sprites[i];
   }
@@ -23,6 +27,7 @@ Manager::Manager() :
   env( SDL_putenv(const_cast<char*>("SDL_VIDEO_CENTERED=center")) ),
   io( IOManager::getInstance() ),
   clock( Clock::getInstance() ),
+  collected(false),
   screen( io.getScreen() ),
   viewport( Viewport::getInstance() ),
   world("back", Gamedata::getInstance().getXmlInt("backFactor") ),
@@ -45,21 +50,45 @@ Manager::Manager() :
   }
   atexit(SDL_Quit);
 	//creating the collision map
-	createCollisionMap();
-	std::cout << "MAP TEST! " << std::endl;
-	std::cout << "width" << foreground->getWidth() << std::endl;
-	std::cout << collisionMap[20] << std::endl;	
-	std::cout << collisionMap[50*foreground->getWidth() + 20] << std::endl;	
-	std::cout << collisionMap[650*foreground->getWidth() + 20] << std::endl;	
+	createCollisionMap();	
 	//collider = new PerPixelCollisionStrategy;
-	sprites.reserve(7);
+	AggroSprite * currSprite;
+	sprites.reserve(12);
 	sprites.push_back( player );
+	collectible * egg = new collectible("egg");
+
+	sprites.push_back(egg);
+	sprites.push_back( new EffectSprite("shiningLight", *egg));
+
 	sprites.push_back( new TwoWaySprite("evilSpiritTwoWay"));
 	sprites.push_back( new TwoWaySprite("evilSpiritTwoWay"));
 	sprites.push_back( new TwoWaySprite("evilSpiritTwoWay"));
-	sprites.push_back( new MultiSprite("evilSpirit"));
-	sprites.push_back( new MultiSprite("evilSpirit"));
-	sprites.push_back( new MultiSprite("evilSpirit"));
+
+
+
+	currSprite = new AggroSprite("evilSpirit", 1000, 200);
+	sprites.push_back(currSprite);
+	player->pushSprite(currSprite);
+
+	currSprite = new AggroSprite("evilSpirit", 2300, 250);
+	sprites.push_back(currSprite);
+	player->pushSprite(currSprite);
+
+	currSprite = new AggroSprite("evilSpirit", 2550, 300);
+	sprites.push_back(currSprite);
+	player->pushSprite(currSprite);
+
+	currSprite = new AggroSprite("evilSpirit", 4550, 300);
+	sprites.push_back(currSprite);
+	player->pushSprite(currSprite);
+
+	currSprite = new AggroSprite("evilSpirit", 4750, 350);
+	sprites.push_back(currSprite);
+	player->pushSprite(currSprite);
+
+	currSprite = new AggroSprite("evilSpirit", 4900, 300);
+	sprites.push_back(currSprite);
+	player->pushSprite(currSprite);
 
 	viewport.setObjectToTrack(sprites[0]);
 }
@@ -67,29 +96,38 @@ Manager::Manager() :
 /* 
 	CHECKS FOR COLLISIONS
 */
-bool Manager::checkForCollisions() const {
-  std::vector<Drawable*>::const_iterator sprite = sprites.begin() + 1;
+void Manager::checkForCollisions(Uint32 ticks) {
+	std::vector<Drawable*>::const_iterator sprite = sprites.begin() + 1;
+	if(!collected){
+		collectible * egg = dynamic_cast<collectible*>(*sprite);
+		if(egg && player->collidedWith(*sprite)){
+			egg->updateState();
+			player->pushCollectible(egg);
+			collected = true;
+		}
+	}
+	sprite += 2;
   while(sprite != sprites.end() ){
-    if ( player->collidedWith(*sprite) ) return true;
+    if ( player->collidedWith(*sprite) ) 
+	player->setHealth(player->getHealth() - (static_cast<float>(ticks) * 0.005));
     ++sprite;
   }
-  return false;
 }
 
 /*
 	DRAWS ITEMS TO THE SCREEN
 */
-void Manager::draw() const {
+void Manager::draw() {
   world.draw();
-  viewport.draw();
+//  viewport.draw();
   for(unsigned int i = 0; i < sprites.size(); ++i)
 		sprites[i]->draw();
   //io.printMessageCenteredAt(TITLE, 10);
   if(drawHud)
   	HUD.draw();
   player->draw();
-  player->updateVelocity();
-  std::stringstream strm, strm2;
+
+/*  std::stringstream strm, strm2;
   int playerX = static_cast<int>(player->getXPos());
   int playerY = static_cast<int>(player->getYPos());
   strm << "Player at: (" << playerX << ", " << playerY << ")";
@@ -103,17 +141,7 @@ void Manager::draw() const {
   }
   else {
     io.printMessageAt("No Collision.", 320, 60);
-  }
- /* world.draw();
-  viewport.draw();
-  for(unsigned int i = 0; i < sprites.size(); ++i)
-		sprites[i]->draw();
-  io.printMessageCenteredAt(TITLE, 10);
-  if(drawHud)
-  		HUD.draw();
-  player->draw();
-  player->updateVelocity();
-  SDL_Flip(screen);*/
+  }*/
   SDL_Flip(screen);
 }
 
@@ -136,6 +164,7 @@ void Manager::makeFrame() {
 void Manager::update() {
   ++clock;
   Uint32 ticks = clock.getElapsedTicks();
+  checkForCollisions(ticks);
   for(unsigned int i = 0; i < sprites.size(); ++i)
 		sprites[i]->update(ticks);
   if ( makeVideo && frameCount < frameMax ) {
@@ -186,9 +215,30 @@ void Manager::createCollisionMap(){
 }
 
 
+bool Manager::checkVictory(){
+	if(collected && (player->X() < 300))
+		return true;
+	return false;
+}
 
+bool Manager::checkDefeat() {
+	if(player->getHealth() <= 0)
+		return true;
+	return false;
+}	
+
+void Manager::reset(){
+	collected = false;
+	collectible * temp = dynamic_cast<collectible*>(sprites[1]);
+	if(temp) temp->resetState();
+	sprites[1]->X(Gamedata::getInstance().getXmlInt("eggX"));
+	sprites[1]->Y(Gamedata::getInstance().getXmlInt("eggY"));
+	player->X(Gamedata::getInstance().getXmlInt("playerSrcX"));
+	player->Y(Gamedata::getInstance().getXmlInt("playerSrcY"));
+	player->popCollected();
+
+}
 	
-
 /*
 	RUNS THE EVENT LOOP
 */
@@ -263,10 +313,14 @@ void Manager::play() {
         std::cout << "Making video frames" << std::endl;
         makeVideo = true;
       }
-		if (keystate[SDLK_F1] && !keyCatch){
-			keyCatch = true;
-			drawHud = !drawHud;
-		}
+	if (keystate[SDLK_F1] && !keyCatch){
+		keyCatch = true;
+		drawHud = !drawHud;
+	}
+	if( keystate[SDLK_r] && !keyCatch){
+		keyCatch = true;
+		reset();
+	}
     }
 	if(footStatus == 1){
 		player->disableGravity();
@@ -275,7 +329,17 @@ void Manager::play() {
 	else if(footStatus == 2) player->enableGravity();
 	else player->disableGravity();
 
-    draw();
-    update();
+	if(checkDefeat()){
+		io.printMessageAt("YOU LOSE!!!", 300, 300);
+		SDL_Flip(screen);
+	}
+	else if(checkVictory()){
+		io.printMessageAt("YOU WIN!!!", 300, 300);
+		SDL_Flip(screen);
+	}	
+	else{
+    		draw();
+    		update();
+	}
   }
 }

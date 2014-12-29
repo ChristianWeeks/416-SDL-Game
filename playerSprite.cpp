@@ -1,10 +1,15 @@
 #include "playerSprite.h"
 #include "gamedata.h"
+#include "aaline.h"
+#include "ioManager.h"
 
 PlayerSprite::PlayerSprite(const std::string& name) : MultiSprite(name),
+	health(100.0),
 	maxXSpeed( Gamedata::getInstance().getXmlInt("playerMaxX") ),
 	maxYSpeed( Gamedata::getInstance().getXmlInt("playerMaxY") ),
 	io( IOManager::getInstance() ),
+	spriteObservers(),
+	collectObservers(),
 	gravity(false),
 	footSupport(0),
         collider()
@@ -18,8 +23,6 @@ PlayerSprite::PlayerSprite(const std::string& name) : MultiSprite(name),
 	leftFoot[1] = (width * 3) / 7;
 	rightFoot[0] = heightOffset;
 	rightFoot[1] = (width * 4) / 7;
-	std::cout << "Right:" << rightFoot[0] << ", " << rightFoot[1] << std::endl;
-	std::cout << "Left:" << leftFoot[0] << ", " << leftFoot[1] << std::endl;
 	setVelocity(Vector2f(0,0));
 	keyPressedX[0] = 0;
 	keyPressedX[1] = 0;
@@ -28,9 +31,12 @@ PlayerSprite::PlayerSprite(const std::string& name) : MultiSprite(name),
 }
 
 PlayerSprite::PlayerSprite(const PlayerSprite& p) : MultiSprite(p),
+	health(100.0),
 	maxXSpeed( p.maxXSpeed ),
 	maxYSpeed( p.maxYSpeed ),
 	io( IOManager::getInstance() ),
+	spriteObservers(),
+	collectObservers(),
 	gravity(false),
 	footSupport(0),
         collider()
@@ -109,12 +115,29 @@ void PlayerSprite::adjustFooting(bool * collisionMap, int worldWidth){
 	
 }
 
+void PlayerSprite::update(Uint32 ticks) {
+  
+  advanceFrame(ticks);
+
+  Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
+  setPosition(getPosition() + incr);
+  updateVelocity();
+
+  //notifying mobs and items of new position
+	for(unsigned int i = 0; i < spriteObservers.size(); ++i)
+		spriteObservers[i]->notify(X(), Y());
+	for(unsigned int i = 0; i < collectObservers.size(); ++i)
+		collectObservers[i]->notify(X(), Y());
+
+
+}
+
 void PlayerSprite::updateVelocity(){
 
-	io.printMessageValueAt("Right Key Pressed: ", keyPressedX[0], 20, 200);
+/*	io.printMessageValueAt("Right Key Pressed: ", keyPressedX[0], 20, 200);
 	io.printMessageValueAt("Left Key Pressed: ", keyPressedX[1], 20, 215);
 	io.printMessageValueAt("Down Key Pressed:", keyPressedY[0], 20, 230);
-	io.printMessageValueAt("Up Key Pressed: ", keyPressedY[1], 20, 245);
+	io.printMessageValueAt("Up Key Pressed: ", keyPressedY[1], 20, 245);*/
 	io.printMessageValueAt("Gravity: ", (int)gravity, 20, 260);
 	io.printMessageValueAt("FootSupport: ", footSupport, 20, 275);
 	//stopping character if he hits the edge of the world and is moving that direction
@@ -147,6 +170,13 @@ void PlayerSprite::updateVelocity(){
 			setVelY(0);
 	}
 	if(gravity) setVelY(velocityY() + 100);
+}
+
+void PlayerSprite::draw() const {
+	Uint32 x = static_cast<Uint32>(X());
+	Uint32 y = static_cast<Uint32>(Y());
+	frames[currentFrame]->draw(x, y);
+	Draw_AALine(IOManager::getInstance().getScreen(), 30, 450, 30+(int)health, 450, 10.0f, 0xff, 0xff, 0xff, 0xff);
 }
 
 void PlayerSprite::setKeyX(int index, int value){

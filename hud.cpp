@@ -33,8 +33,9 @@ void hud::draw() const {
 						pos[0], pos[1]+height, 1.0f, borderColor);
 	io.printMessageValueAt("Seconds: ", clock.getSeconds(), pos[0]+10, pos[1]+30);
 	io.printMessageValueAt("fps: ", clock.getFps(), pos[0]+10, pos[1]+50);	
-	io.printMessageAt("Press T to switch Sprites: ", pos[0]+10, pos[1]+70);
-   io.printMessageAt("Christian Weeks' project", pos[0]+10, pos[1]+90);
+	io.printMessageAt("Press r to reset game", pos[0]+10, pos[1]+70);
+	io.printMessageAt("Press Space to turn off music", pos[0]+10, pos[1]+90);
+	io.printMessageAt("Press F1 to turn off HUD", pos[0]+10, pos[1]+110);
 }
 
 

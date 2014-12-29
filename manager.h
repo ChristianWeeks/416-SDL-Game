@@ -18,6 +18,7 @@ private:
   const bool env;
   const IOManager& io;
   Clock& clock;
+  bool collected;
 
   //screen must be initialized before viewport & world
   SDL_Surface * const screen;
@@ -47,11 +48,14 @@ private:
  // CollisionStrategy * collider;
 
   void makeFrame();
-  void draw() const;
+  void draw();
+  bool checkVictory();
+  bool checkDefeat();
   void update();
-  bool checkForCollisions() const;
+  void checkForCollisions(Uint32);
   bool isVisible(Uint32, SDL_Surface *) const;
   void createCollisionMap();
+  void reset();
 
 
   Manager(const Manager&);

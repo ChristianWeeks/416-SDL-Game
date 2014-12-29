@@ -151,7 +151,7 @@ std::vector<Frame*> FrameFactory::getBackLayers(const std::string& name) {
    surfaces.push_back(currentLayer); 
    frames.push_back( new Frame(name, currentLayer) );
   }
-  SDL_FreeSurface(currentLayer);
+
   backgroundSurfaces[name] = surfaces;
   backgroundFrames[name] = frames;
   return frames;

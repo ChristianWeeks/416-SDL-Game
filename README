@@ -1,31 +1,51 @@
 Name: Christian Weeks	
 Clemson Email Address: caweeks
 
-Project no: 4
-Project due date: 4/15/2014
-Project description: Object Pooling, Projectiles, Collisions, Explosions, and Sound
+Project no: 5
+Project due date: 4/23/2014
+Project description: FINAL PROJECT!!!!
 
-The Specs that I implemented are:
-*Music
-*Collision Detection
+LINUX DEPENDENCIES - you will receive compilation errors unless these libraries are installed:
+
+	libsdl-gfx1.2-dev
+	libsdl-ttf2.0-dev
+	libsdl-image1.2-dev
+	libsdl-mixer1.2-dev
+
+	After these are installed, running
+	>make
+	>./run
+	should be all you have to do
+
+TO BEAT THE GAME:
+
+	Retrieve the item at the far right end of the level and bring it back to the starting location.
+	Don't die.
 
 
-The Specs that I was unable to implement are:
-*Explosions
-*Projectiles / Memory Pooling
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NEW FEATURES:
 
-Extras:
-*Created a new playersprite with run sequences for left and right and an idle sprite.
-*fixed old sprites that weren't extracted properly because they were unaligned.
-*fixed key captures so they are much more responsive.
+	*Collision map generated from foreground.  Player successfully runs along the ground and is pulled down by gravity while in the air.  Player can jump, although it doesn't work when he is running downhill because of the way gravity and foot support works.
 
+	*Game world is 4x larger than before (6400 px).  Unique art for all 5 layers for entire length. Viewport code modified so that smaller images may be used for the background since the background moves slower.
 
-ToDo:
-*Add in gravity and fix collision detection so player stands on the foreground
-	--need to rework background images for this, possibly create new class.  Right now they are just frames instead of Sprites.
-*Add health or point system
-*Add collectibles
-*extend scene and add an ending to the far left
+	*new AggroSprite class.  Inherits from MultiSprite.  AI implementation. Some enemies spawn at pre-determined locations.  If the user gets within their aggro range, they will follow the user until they reach their leash length, at which point they will return to their home spot (if the user is also out of range). Uses observer pattern.
 
-Comments:
-*As we've discussed, I don't really see projectiles or explosions really fitting into my game.  That being said, the only thing I did to make up for them is implement new sprites, which isn't really technical so I understand taking off points.  I'm ashamed to admit that this is a poor turnin as I've not completed half the features;  I've just had to reprioritize things lately and this project came out on bottom (also cause for my abysmal quiz performance on Monday).  Hope this isn't disappointing; considering how often I come in and speak with you, I feel like I should be doing a bit better in your class.  I'm still looking forward to creating a well-polished and aesthetically pleasing game, even if it takes into the summer.
+	*New EffectSprite Class.  Inherits from MultiSprite. Contains a reference to a "host" drawable as well as offset variables so that different effects can be drawn around the host sprite.  Used on the player and the collection item.
+
+	*New CollectibleSprite Class.  Inherits MultiSprite.  Added behavior to react and be "collected" when the user comes into contact with it.
+
+	*Player Health.  ENEMIES DO DAMAGE AS THEY CONTACT THE PLAYER
+
+	*Press r to reset the game.  Resets player and victory item positions.
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+TODO:
+	*fix jumping and gravity mechanics so the player isn't technically considered falling / unsupported when moving downhill
+
+	*player->updateVelocity is called in the manager::draw() because it draws the pressed keys to screen.  Should be called in manager::update().
+
+	*backgrounds do not align perfectly at the very end of the game world.  The math says it should align perfectly, so this could be a rounding issue that accumulates as the planes move 1 pixel at a time as the viewport moves.  Quick fix could be to just make the images larger or slightly decrease the constant that dictates the planes' rate of movement relative to the viewport.
+
+	*More interesting AI + custom enemy animations and attacks would be nice

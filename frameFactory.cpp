@@ -3,7 +3,7 @@
 #include "extractSurface.h"
 #include "ioManager.h"
 #include "vector2f.h"
-
+#include "string.h"
 
 FrameFactory::~FrameFactory() {
   std::cout << "Deleting FrameFactory" << std::endl;
@@ -144,12 +144,14 @@ std::vector<Frame*> FrameFactory::getBackLayers(const std::string& name) {
   //All background layers have same width and height and starting location.  This will probably be changed in the future for efficiency.
 
   char layerNumber;
+  string layerName;
   for (unsigned i = 0; i < numberOfLayers; ++i) {
 	layerNumber = i + 49;
-	currentLayer = IOManager::getInstance().loadAndSet(gdata.getXmlStr(name + "Layer" + layerNumber + "File"), false);
+	layerName = name + "Layer" + layerNumber + "File";
+	currentLayer = IOManager::getInstance().loadAndSet(gdata.getXmlStr(layerName), false);
 	//calling extractsurface to cut up the multisprite and place it in the vector of frames
    surfaces.push_back(currentLayer); 
-   frames.push_back( new Frame(name, currentLayer) );
+   frames.push_back( new Frame(layerName, currentLayer) );
   }
 
   backgroundSurfaces[name] = surfaces;
